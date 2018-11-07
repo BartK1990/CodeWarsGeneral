@@ -10,33 +10,22 @@ namespace CodeWarsGeneral
     {
         static void Main(string[] args)
         {
-            /*
-            Console.WriteLine(Fibonacci.fib(0));
-            Console.WriteLine(Fibonacci.fib(1));
-            Console.WriteLine(Fibonacci.fib(2));
-            Console.WriteLine(Fibonacci.fib(3));
-            Console.WriteLine(Fibonacci.fib(4));
-            Console.WriteLine(Fibonacci.fib(5));
-            Console.WriteLine(Fibonacci.fib(6));
-            Console.WriteLine(Fibonacci.fib(7));
-            Console.WriteLine(Fibonacci.fib(8));
-            Console.WriteLine(Fibonacci.fib(9));
-            Console.WriteLine(Fibonacci.fib(10));
-            Console.WriteLine(Fibonacci.fib(11));
-            Console.WriteLine(Fibonacci.fib(12));
-            Console.WriteLine(Fibonacci.fib(13));
-            Console.WriteLine(Fibonacci.fib(14));
-            */
-            Console.WriteLine(Fibonacci.fib(-1));
-            Console.WriteLine(Fibonacci.fib(-2));
-            Console.WriteLine(Fibonacci.fib(-3));
-            Console.WriteLine(Fibonacci.fib(-4));
-            Console.WriteLine(Fibonacci.fib(-5));
-            Console.WriteLine(Fibonacci.fib(-6));
-            Console.WriteLine(Fibonacci.fib(-7));
+            var goodSudoku = new Sudoku(
+                new int[][] {
+                  new int[] {7,8,4, 1,5,9, 3,2,6},
+                  new int[] {5,3,9, 6,7,2, 8,4,1},
+                  new int[] {6,1,2, 4,3,8, 7,5,9},
+
+                  new int[] {9,2,8, 7,1,5, 4,6,3},
+                  new int[] {3,5,7, 8,4,6, 1,9,2},
+                  new int[] {4,6,1, 9,2,3, 5,8,7},
+
+                  new int[] {8,7,6, 3,9,4, 2,1,5},
+                  new int[] {2,4,3, 5,6,1, 9,7,8},
+                  new int[] {1,9,5, 2,8,7, 6,3,4}
+                });
+            goodSudoku.IsValid();
             Console.ReadKey();
         }
-
-
     }
 }
