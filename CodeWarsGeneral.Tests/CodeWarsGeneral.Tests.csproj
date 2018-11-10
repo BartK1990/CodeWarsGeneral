@@ -37,7 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SudokuTests.cs" />
+    <Compile Include="ChessSolutionTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

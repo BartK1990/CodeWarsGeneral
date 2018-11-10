@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChessSolution.cs" />
     <Compile Include="Dioph.cs" />
     <Compile Include="Fibonacci.cs" />
     <Compile Include="PokerHand.cs" />
