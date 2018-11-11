@@ -59,9 +59,11 @@ namespace CodeWarsGeneral
     public class ChessSolution
     {
 
-        public const sbyte boardBoundary = 7;
+        public const sbyte boardMaxBoundary = 7;
+        public const sbyte boardMinBoundary = 0;
 
         public static List<Pos> attackPos;
+        public static List<Pos> piecesPos;
 
         // Returns an array of threats if the arrangement of 
         // the pieces is a check, otherwise null
@@ -82,83 +84,199 @@ namespace CodeWarsGeneral
         public static List<Figure> AttackPos(IList<Figure> pieces, int player)
         {
             attackPos.Clear();
-            List<Figure> checkFigures = new List<Figure>();
+            List<Figure> checkPieces = new List<Figure>();
             List<Pos> attackPosTemp = new List<Pos>();
             Pos kingPos = new Pos(-1, -1);
 
-            foreach(Figure piece in pieces)
+            foreach (Figure piece in pieces)
             {
                 if ((piece.Type == FigureType.King) && (piece.Owner == player))
                     kingPos = piece.Cell;
             }
-            
+
             if (kingPos.X == (-1))
                 return null;
-                
-            for (sbyte i=0; i < pieces.Count; i++)
+
+            piecesPos.Clear();
+            foreach(Figure piece in pieces)
             {
-                if (pieces[i].Owner != (byte)player)
+                piecesPos.Add(piece.Cell);
+            }
+
+            foreach(Figure piece in pieces)
+            {
+                if (piece.Owner != (byte)player)
                     continue;
-                if(pieces[i].Type == FigureType.Pawn)
+                if (piece.Type == FigureType.Pawn)
                 {
-                    attackPosTemp = PawnAttackPos(pieces, i, player);
-                }else if (pieces[i].Type == FigureType.Knight)
+                    attackPosTemp = PawnAttackPos(piece, player, ref checkPieces, kingPos);
+                } else if (piece.Type == FigureType.Knight)
                 {
-                    attackPosTemp = KnightAttackPos(pieces, i);
+                    attackPosTemp = KnightAttackPos(piece, ref checkPieces, kingPos);
                 }
-                else if (pieces[i].Type == FigureType.King)
+                else if (piece.Type == FigureType.King)
                 {
-                    attackPosTemp = KingAttackPos(pieces, i);
+                    attackPosTemp = KingAttackPos(piece, ref checkPieces, kingPos);
                 }
-                else if (pieces[i].Type == FigureType.Bishop)
+                else if (piece.Type == FigureType.Bishop)
                 {
-                    attackPosTemp = BishopAttackPos(pieces, i);
+                    attackPosTemp = BishopAttackPos(piece, ref checkPieces, kingPos);
                 }
-                else if (pieces[i].Type == FigureType.Queen)
+                else if (piece.Type == FigureType.Queen)
                 {
-                    attackPosTemp = QueenAttackPos(pieces, i);
+                    attackPosTemp = QueenAttackPos(piece, ref checkPieces, kingPos);
                 }
-                else if (pieces[i].Type == FigureType.Rook)
+                else if (piece.Type == FigureType.Rook)
                 {
-                    attackPosTemp = RookAttackPos(pieces, i);
+                    attackPosTemp = RookAttackPos(piece, ref checkPieces, kingPos);
                 }
-                foreach(Pos p in attackPosTemp)
+                foreach (Pos p in attackPosTemp)
                 {
                     if (!attackPos.Contains(p))
                         attackPos.Add(p);
                 }
             }
-            return checkFigures;
+            return checkPieces;
         }
 
-        public static List<Pos> PawnAttackPos(IList<Figure> pieces, sbyte piecePos, int player, ref List<Figure> checkPieces)
+        public static List<Pos> PawnAttackPos(Figure piece,int player, ref List<Figure> checkPieces, Pos kingPos)
+        {
+            sbyte playerCorrection;
+            playerCorrection = ((player == 0) ? (sbyte)1 : (sbyte)-1);
+            sbyte xAdd = 0;
+            sbyte yAdd = 0;
+            List<Pos> attackPosPiece = new List<Pos>();
+            for (int direction = 0; direction < 2; direction++)
+            {
+                switch (direction)
+                {
+                    case 0:
+                        xAdd = -1;
+                        yAdd = -1;
+                        break;
+                    case 1:
+                        xAdd = 1;
+                        yAdd = -1;
+                        break;
+                }
+                yAdd *= playerCorrection;
+                sbyte x = piece.Cell.X, y = piece.Cell.Y;
+                x += xAdd;
+                y += yAdd;
+                if ((x > boardMinBoundary) && (x < boardMaxBoundary) && (y > boardMinBoundary) && (y < boardMaxBoundary))
+                {
+                    Pos posToCheck = new Pos(x, y);
+                    if (posToCheck.Equals(kingPos))
+                        checkPieces.Add(piece);
+                    attackPosPiece.Add(posToCheck);
+                }
+            }
+            return attackPosPiece;
+        }
+
+        public static List<Pos> KnightAttackPos(Figure piece, ref List<Figure> checkPieces, Pos kingPos)
         {
 
         }
 
-        public static List<Pos> KnightAttackPos(IList<Figure> pieces, sbyte piecePos)
+        public static List<Pos> KingAttackPos(Figure piece, ref List<Figure> checkPieces, Pos kingPos)
         {
 
         }
 
-        public static List<Pos> KingAttackPos(IList<Figure> pieces, sbyte piecePos)
+        public static List<Pos> QueenAttackPos(Figure piece, ref List<Figure> checkPieces, Pos kingPos)
         {
-
+            List<Pos> attackPosPiece = new List<Pos>();
+            attackPosPiece.AddRange(BishopAttackPos(piece, ref checkPieces, kingPos));
+            attackPosPiece.AddRange(RookAttackPos(piece, ref checkPieces, kingPos));
+            return attackPosPiece;
         }
 
-        public static List<Pos> QueenAttackPos(IList<Figure> pieces, sbyte piecePos)
+        public static List<Pos> BishopAttackPos(Figure piece, ref List<Figure> checkPieces, Pos kingPos)
         {
-
+            sbyte xAdd = 0;
+            sbyte yAdd = 0;
+            List<Pos> attackPosPiece = new List<Pos>();
+            for (int direction = 0; direction < 4; direction++)
+            {
+                switch (direction)
+                {
+                    case 0:
+                        xAdd = -1;
+                        yAdd = -1;
+                        break;
+                    case 1:
+                        xAdd = 1;
+                        yAdd = -1;
+                        break;
+                    case 2:
+                        xAdd = -1;
+                        yAdd = 1;
+                        break;
+                    case 3:
+                        xAdd = 1;
+                        yAdd = 1;
+                        break;
+                }
+                RookBishopAttackPos(piece, ref checkPieces, kingPos, ref attackPosPiece, xAdd, yAdd);
+            }
+            return attackPosPiece;
         }
 
-        public static List<Pos> BishopAttackPos(IList<Figure> pieces, sbyte piecePos)
+        public static List<Pos> RookAttackPos(Figure piece, ref List<Figure> checkPieces, Pos kingPos)
         {
-
+            sbyte xAdd = 0;
+            sbyte yAdd = 0;
+            List<Pos> attackPosPiece = new List<Pos>();
+            for (int direction = 0; direction < 4; direction++)
+            {
+                switch (direction)
+                {
+                    case 0:
+                        xAdd = -1;
+                        yAdd = 0;
+                        break;
+                    case 1:
+                        xAdd = 0;
+                        yAdd = -1;
+                        break;
+                    case 2:
+                        xAdd = 1;
+                        yAdd = 0;
+                        break;
+                    case 3:
+                        xAdd = 0;
+                        yAdd = 1;
+                        break;
+                }
+                RookBishopAttackPos(piece,ref checkPieces, kingPos,ref attackPosPiece, xAdd, yAdd);
+            }
+            return attackPosPiece;
         }
 
-        public static List<Pos> RookAttackPos(IList<Figure> pieces, sbyte piecePos)
+        public static void RookBishopAttackPos(Figure piece, ref List<Figure> checkPieces, Pos kingPos, 
+            ref List<Pos> attackPosPiece, sbyte xAdd, sbyte yAdd)
         {
-
+            sbyte x = piece.Cell.X, y = piece.Cell.Y;
+            while ((x > boardMinBoundary) && (x < boardMaxBoundary) && (y > boardMinBoundary) && (y < boardMaxBoundary))
+            {
+                x += xAdd;
+                y += yAdd;
+                Pos posToCheck = new Pos(x, y);
+                if (posToCheck.Equals(kingPos))
+                {
+                    attackPosPiece.Add(posToCheck);
+                    checkPieces.Add(piece);
+                    break;
+                }
+                else if (piecesPos.Contains(posToCheck))
+                {
+                    attackPosPiece.Add(posToCheck);
+                    break;
+                }
+                else
+                    attackPosPiece.Add(posToCheck);
+            }
         }
     }
 }
