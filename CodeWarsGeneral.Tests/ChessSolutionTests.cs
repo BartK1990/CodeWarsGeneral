@@ -13,33 +13,51 @@ namespace CodeWarsGeneral.Tests
     public class SolutionSampleTest
     {
         [Test]
-        public void MyTest()
+        public void Test1()
         {
-            CollectionAssert.AreEquivalent(ChessSolution.isCheck(SampleTestCases.pawnThreatensKing, 0),
-              new[] { SampleTestCases.pawnThreatensKing[2] },
-              "Pawn threatens king");
-
-            CollectionAssert.AreEquivalent(ChessSolution.isCheck(SampleTestCases.rookThreatensKing, 0),
+            CollectionAssert.AreEquivalent(new[] { SampleTestCases.pawnThreatensKing[2] },
+            Solution.isCheck(SampleTestCases.pawnThreatensKing, 0),
+            "Pawn threatens king");
+        }
+        [Test]
+        public void Test2()
+        {
+            CollectionAssert.AreEquivalent(Solution.isCheck(SampleTestCases.rookThreatensKing, 0),
               new[] { SampleTestCases.rookThreatensKing[2] },
               "Rook threatens king");
-
-            CollectionAssert.AreEquivalent(ChessSolution.isCheck(SampleTestCases.knightThreatensKing, 0),
+        }
+        [Test]
+        public void Test3()
+        {
+            CollectionAssert.AreEquivalent(Solution.isCheck(SampleTestCases.knightThreatensKing, 0),
               new[] { SampleTestCases.knightThreatensKing[2] },
               "Knight threatens king");
-
-            CollectionAssert.AreEquivalent(ChessSolution.isCheck(SampleTestCases.bishopThreatensKing, 0),
+        }
+        [Test]
+        public void Test4()
+        {
+            CollectionAssert.AreEquivalent(Solution.isCheck(SampleTestCases.bishopThreatensKing, 0),
               new[] { SampleTestCases.bishopThreatensKing[2] },
               "Bishop threatens king");
-
-            CollectionAssert.AreEquivalent(ChessSolution.isCheck(SampleTestCases.queenThreatensKing1, 0),
+        }
+        [Test]
+        public void Test5()
+        {
+            CollectionAssert.AreEquivalent(Solution.isCheck(SampleTestCases.queenThreatensKing1, 0),
               new[] { SampleTestCases.queenThreatensKing1[2] },
               "Queen threatens king");
-
-            CollectionAssert.AreEquivalent(ChessSolution.isCheck(SampleTestCases.queenThreatensKing2, 0),
+        }
+        [Test]
+        public void Test6()
+        {
+            CollectionAssert.AreEquivalent(Solution.isCheck(SampleTestCases.queenThreatensKing2, 0),
               new[] { SampleTestCases.queenThreatensKing2[2] },
               "Queen threatens king");
-
-            CollectionAssert.AreEquivalent(ChessSolution.isCheck(SampleTestCases.doubleThreat, 0),
+        }
+        [Test]
+        public void Test7()
+        {
+            CollectionAssert.AreEquivalent(Solution.isCheck(SampleTestCases.doubleThreat, 0),
               new[] { SampleTestCases.doubleThreat[5], SampleTestCases.doubleThreat[6] },
               "Double threat");
         }

@@ -56,7 +56,7 @@ namespace CodeWarsGeneral
         }
     }
 
-    public class ChessSolution
+    public class Solution
     {
 
         public const sbyte boardMaxBoundary = 7;
@@ -70,42 +70,103 @@ namespace CodeWarsGeneral
         // Checks check for King of color which is defined by player argument
         public static List<Figure> isCheck(IList<Figure> pieces, int player)
         {
-            List<Pos> attackPos = new List<Pos>();
-            return null;
+            List<Figure> checkingPieces = AttackPos(pieces, player);
+            return checkingPieces;
         }
 
         // Returns true if the arrangement of the
         // pieces is a check mate, otherwise false
         public static bool isMate(IList<Figure> pieces, int player)
         {
-            return false;
+            List<Figure> checkingPieces = AttackPos(pieces, player);
+            if (checkingPieces.Count < 1)
+                return false;
+            Figure myKing = new Figure(FigureType.King, 0, new Pos(-1, -1));
+            foreach (Figure piece in pieces)
+            {
+                if ((piece.Type == FigureType.King) && (piece.Owner != player))
+                    myKing = piece;
+            }
+            if (myKing.Cell.X == (-1))
+                return false;
+
+            sbyte xAdd = 0;
+            sbyte yAdd = 0;
+            for (int direction = 0; direction < 8; direction++)
+            {
+                switch (direction)
+                {
+                    case 0:
+                        xAdd = 1;
+                        yAdd = 1;
+                        break;
+                    case 1:
+                        xAdd = 1;
+                        yAdd = 0;
+                        break;
+                    case 2:
+                        xAdd = 0;
+                        yAdd = 1;
+                        break;
+                    case 3:
+                        xAdd = -1;
+                        yAdd = -1;
+                        break;
+                    case 4:
+                        xAdd = 1;
+                        yAdd = -1;
+                        break;
+                    case 5:
+                        xAdd = -1;
+                        yAdd = 1;
+                        break;
+                    case 6:
+                        xAdd = 0;
+                        yAdd = -1;
+                        break;
+                    case 7:
+                        xAdd = -1;
+                        yAdd = 0;
+                        break;
+                }
+                sbyte x = myKing.Cell.X, y = myKing.Cell.Y;
+                x += xAdd;
+                y += yAdd;
+                if ((x >= boardMinBoundary) && (x <= boardMaxBoundary) && (y >= boardMinBoundary) && (y <= boardMaxBoundary))
+                {
+                    Pos posToCheck = new Pos(y, x);
+                    if ((!attackPos.Contains(posToCheck)) && (!(piecesPos.Contains(posToCheck))))
+                        return false;
+
+                }
+            }
+            return true;
         }
 
         public static List<Figure> AttackPos(IList<Figure> pieces, int player)
         {
-            attackPos.Clear();
+            attackPos = new List<Pos>();
             List<Figure> checkPieces = new List<Figure>();
             List<Pos> attackPosTemp = new List<Pos>();
-            Pos kingPos = new Pos(-1, -1);
 
+            Pos kingPos = new Pos(-1, -1);
             foreach (Figure piece in pieces)
             {
                 if ((piece.Type == FigureType.King) && (piece.Owner == player))
                     kingPos = piece.Cell;
             }
-
             if (kingPos.X == (-1))
                 return null;
 
-            piecesPos.Clear();
-            foreach(Figure piece in pieces)
+            piecesPos = new List<Pos>();
+            foreach (Figure piece in pieces)
             {
                 piecesPos.Add(piece.Cell);
             }
 
             foreach(Figure piece in pieces)
             {
-                if (piece.Owner != (byte)player)
+                if (piece.Owner == (byte)player)
                     continue;
                 if (piece.Type == FigureType.Pawn)
                 {
@@ -151,21 +212,21 @@ namespace CodeWarsGeneral
                 switch (direction)
                 {
                     case 0:
-                        xAdd = -1;
-                        yAdd = -1;
+                        xAdd = 1;
+                        yAdd = 1;
                         break;
                     case 1:
-                        xAdd = 1;
-                        yAdd = -1;
+                        xAdd = -1;
+                        yAdd = 1;
                         break;
                 }
                 yAdd *= playerCorrection;
                 sbyte x = piece.Cell.X, y = piece.Cell.Y;
                 x += xAdd;
                 y += yAdd;
-                if ((x > boardMinBoundary) && (x < boardMaxBoundary) && (y > boardMinBoundary) && (y < boardMaxBoundary))
+                if ((x >= boardMinBoundary) && (x <= boardMaxBoundary) && (y >= boardMinBoundary) && (y <= boardMaxBoundary))
                 {
-                    Pos posToCheck = new Pos(x, y);
+                    Pos posToCheck = new Pos(y, x);
                     if (posToCheck.Equals(kingPos))
                         checkPieces.Add(piece);
                     attackPosPiece.Add(posToCheck);
@@ -176,12 +237,114 @@ namespace CodeWarsGeneral
 
         public static List<Pos> KnightAttackPos(Figure piece, ref List<Figure> checkPieces, Pos kingPos)
         {
-
+            sbyte xAdd = 0;
+            sbyte yAdd = 0;
+            List<Pos> attackPosPiece = new List<Pos>();
+            for (int direction = 0; direction < 8; direction++)
+            {
+                switch (direction)
+                {
+                    case 0:
+                        xAdd = 2;
+                        yAdd = 1;
+                        break;
+                    case 1:
+                        xAdd = 1;
+                        yAdd = 2;
+                        break;
+                    case 2:
+                        xAdd = -2;
+                        yAdd = 1;
+                        break;
+                    case 3:
+                        xAdd = 1;
+                        yAdd = -2;
+                        break;
+                    case 4:
+                        xAdd = 2;
+                        yAdd = -1;
+                        break;
+                    case 5:
+                        xAdd = -1;
+                        yAdd = 2;
+                        break;
+                    case 6:
+                        xAdd = -2;
+                        yAdd = -1;
+                        break;
+                    case 7:
+                        xAdd = -1;
+                        yAdd = -2;
+                        break;
+                }
+                sbyte x = piece.Cell.X, y = piece.Cell.Y;
+                x += xAdd;
+                y += yAdd;
+                if ((x >= boardMinBoundary) && (x <= boardMaxBoundary) && (y >= boardMinBoundary) && (y <= boardMaxBoundary))
+                {
+                    Pos posToCheck = new Pos(y, x);
+                    if (posToCheck.Equals(kingPos))
+                        checkPieces.Add(piece);
+                    attackPosPiece.Add(posToCheck);
+                }
+            }
+            return attackPosPiece;
         }
 
         public static List<Pos> KingAttackPos(Figure piece, ref List<Figure> checkPieces, Pos kingPos)
         {
-
+            sbyte xAdd = 0;
+            sbyte yAdd = 0;
+            List<Pos> attackPosPiece = new List<Pos>();
+            for (int direction = 0; direction < 8; direction++)
+            {
+                switch (direction)
+                {
+                    case 0:
+                        xAdd = 1;
+                        yAdd = 1;
+                        break;
+                    case 1:
+                        xAdd = 1;
+                        yAdd = 0;
+                        break;
+                    case 2:
+                        xAdd = 0;
+                        yAdd = 1;
+                        break;
+                    case 3:
+                        xAdd = -1;
+                        yAdd = -1;
+                        break;
+                    case 4:
+                        xAdd = 1;
+                        yAdd = -1;
+                        break;
+                    case 5:
+                        xAdd = -1;
+                        yAdd = 1;
+                        break;
+                    case 6:
+                        xAdd = 0;
+                        yAdd = -1;
+                        break;
+                    case 7:
+                        xAdd = -1;
+                        yAdd = 0;
+                        break;
+                }
+                sbyte x = piece.Cell.X, y = piece.Cell.Y;
+                x += xAdd;
+                y += yAdd;
+                if ((x >= boardMinBoundary) && (x <= boardMaxBoundary) && (y >= boardMinBoundary) && (y <= boardMaxBoundary))
+                {
+                    Pos posToCheck = new Pos(y, x);
+                    if (posToCheck.Equals(kingPos))
+                        checkPieces.Add(piece);
+                    attackPosPiece.Add(posToCheck);
+                }
+            }
+            return attackPosPiece;
         }
 
         public static List<Pos> QueenAttackPos(Figure piece, ref List<Figure> checkPieces, Pos kingPos)
@@ -258,11 +421,11 @@ namespace CodeWarsGeneral
             ref List<Pos> attackPosPiece, sbyte xAdd, sbyte yAdd)
         {
             sbyte x = piece.Cell.X, y = piece.Cell.Y;
-            while ((x > boardMinBoundary) && (x < boardMaxBoundary) && (y > boardMinBoundary) && (y < boardMaxBoundary))
+            x += xAdd;
+            y += yAdd;
+            while ((x >= boardMinBoundary) && (x <= boardMaxBoundary) && (y >= boardMinBoundary) && (y <= boardMaxBoundary))
             {
-                x += xAdd;
-                y += yAdd;
-                Pos posToCheck = new Pos(x, y);
+                Pos posToCheck = new Pos(y, x);
                 if (posToCheck.Equals(kingPos))
                 {
                     attackPosPiece.Add(posToCheck);
@@ -276,6 +439,8 @@ namespace CodeWarsGeneral
                 }
                 else
                     attackPosPiece.Add(posToCheck);
+                x += xAdd;
+                y += yAdd;
             }
         }
     }
