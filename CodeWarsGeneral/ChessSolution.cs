@@ -63,7 +63,7 @@ namespace CodeWarsGeneral
         public const sbyte boardMinBoundary = 0;
 
         public static List<Pos> attackPos;
-        public static List<Pos> piecesPos;
+        public static List<Pos>[] piecesPos;
 
         // Returns an array of threats if the arrangement of 
         // the pieces is a check, otherwise null
@@ -158,10 +158,10 @@ namespace CodeWarsGeneral
             if (kingPos.X == (-1))
                 return null;
 
-            piecesPos = new List<Pos>();
+            piecesPos = { new List<Pos>(), new List<Pos>()};
             foreach (Figure piece in pieces)
             {
-                piecesPos.Add(piece.Cell);
+                piecesPos[piece.Owner].Add(piece.Cell);
             }
 
             foreach(Figure piece in pieces)
@@ -235,213 +235,213 @@ namespace CodeWarsGeneral
             return attackPosPiece;
         }
 
-        public static List<Pos> KnightAttackPos(Figure piece, ref List<Figure> checkPieces, Pos kingPos)
+        public static List<Pos> PossibleMoves(Figure piece, int player)
         {
-            sbyte xAdd = 0;
-            sbyte yAdd = 0;
-            List<Pos> attackPosPiece = new List<Pos>();
-            for (int direction = 0; direction < 8; direction++)
+            List<Pos> possibleMoves = new List<Pos>();
+            List<sbyte>[] possibleMovesTemp = { new List<sbyte>(), new List<sbyte>() };
+            if ((piece.Type == FigureType.Bishop) || (piece.Type == FigureType.Queen))
             {
-                switch (direction)
+                for (int direction = 0; direction < 4; direction++)
                 {
-                    case 0:
-                        xAdd = 2;
-                        yAdd = 1;
-                        break;
-                    case 1:
-                        xAdd = 1;
-                        yAdd = 2;
-                        break;
-                    case 2:
-                        xAdd = -2;
-                        yAdd = 1;
-                        break;
-                    case 3:
-                        xAdd = 1;
-                        yAdd = -2;
-                        break;
-                    case 4:
-                        xAdd = 2;
-                        yAdd = -1;
-                        break;
-                    case 5:
-                        xAdd = -1;
-                        yAdd = 2;
-                        break;
-                    case 6:
-                        xAdd = -2;
-                        yAdd = -1;
-                        break;
-                    case 7:
-                        xAdd = -1;
-                        yAdd = -2;
-                        break;
+                    switch (direction)
+                    {
+                        case 0:
+                            possibleMovesTemp[0].Add(-1);
+                            possibleMovesTemp[1].Add(-1);
+                            break;
+                        case 1:
+                            possibleMovesTemp[0].Add(1);
+                            possibleMovesTemp[1].Add(-1);
+                            break;
+                        case 2:
+                            possibleMovesTemp[0].Add(-1);
+                            possibleMovesTemp[1].Add(1);
+                            break;
+                        case 3:
+                            possibleMovesTemp[0].Add(1);
+                            possibleMovesTemp[1].Add(1);
+                            break;
+                    }
                 }
+            }
+            if ((piece.Type == FigureType.Rook) || (piece.Type == FigureType.Queen))
+            {
+                for (int direction = 0; direction < 4; direction++)
+                {
+                    switch (direction)
+                    {
+                        case 0:
+                            possibleMovesTemp[0].Add(-1);
+                            possibleMovesTemp[1].Add(0);
+                            break;
+                        case 1:
+                            possibleMovesTemp[0].Add(0);
+                            possibleMovesTemp[1].Add(-1);
+                            break;
+                        case 2:
+                            possibleMovesTemp[0].Add(1);
+                            possibleMovesTemp[1].Add(0);
+                            break;
+                        case 3:
+                            possibleMovesTemp[0].Add(0);
+                            possibleMovesTemp[1].Add(1);
+                            break;
+                    }
+                }
+            }
+            if (piece.Type == FigureType.King)
+            {
+                for (int direction = 0; direction < 8; direction++)
+                {
+                    switch (direction)
+                    {
+                        case 0:
+                            possibleMovesTemp[0].Add(1);
+                            possibleMovesTemp[1].Add(1);
+                            break;
+                        case 1:
+                            possibleMovesTemp[0].Add(1);
+                            possibleMovesTemp[1].Add(0);
+                            break;
+                        case 2:
+                            possibleMovesTemp[0].Add(0);
+                            possibleMovesTemp[1].Add(1);
+                            break;
+                        case 3:
+                            possibleMovesTemp[0].Add(-1);
+                            possibleMovesTemp[1].Add(-1);
+                            break;
+                        case 4:
+                            possibleMovesTemp[0].Add(1);
+                            possibleMovesTemp[1].Add(-1);
+                            break;
+                        case 5:
+                            possibleMovesTemp[0].Add(-1);
+                            possibleMovesTemp[1].Add(1);
+                            break;
+                        case 6:
+                            possibleMovesTemp[0].Add(0);
+                            possibleMovesTemp[1].Add(-1);
+                            break;
+                        case 7:
+                            possibleMovesTemp[0].Add(-1);
+                            possibleMovesTemp[1].Add(0);
+                            break;
+                    }
+                }
+            }
+            if (piece.Type == FigureType.Knight)
+            {
+                for (int direction = 0; direction < 8; direction++)
+                {
+                    switch (direction)
+                    {
+                        case 0:
+                            possibleMovesTemp[0].Add(2);
+                            possibleMovesTemp[1].Add(1);
+                            break;
+                        case 1:
+                            possibleMovesTemp[0].Add(1);
+                            possibleMovesTemp[1].Add(2);
+                            break;
+                        case 2:
+                            possibleMovesTemp[0].Add(-2);
+                            possibleMovesTemp[1].Add(1);
+                            break;
+                        case 3:
+                            possibleMovesTemp[0].Add(1);
+                            possibleMovesTemp[1].Add(-2);
+                            break;
+                        case 4:
+                            possibleMovesTemp[0].Add(2);
+                            possibleMovesTemp[1].Add(-1);
+                            break;
+                        case 5:
+                            possibleMovesTemp[0].Add(-1);
+                            possibleMovesTemp[1].Add(2);
+                            break;
+                        case 6:
+                            possibleMovesTemp[0].Add(-2);
+                            possibleMovesTemp[1].Add(-1);
+                            break;
+                        case 7:
+                            possibleMovesTemp[0].Add(-1);
+                            possibleMovesTemp[1].Add(-2);
+                            break;
+                    }
+                }
+            }
+            if ((piece.Type == FigureType.Pawn))
+            {
+                sbyte playerCorrection = ((player == 0) ? (sbyte)1 : (sbyte)-1);
+                for (int direction = 0; direction < 2; direction++)
+                {
+                    switch (direction)
+                    {
+                        case 0:
+                            possibleMovesTemp[0].Add((sbyte)(1 * playerCorrection));
+                            possibleMovesTemp[1].Add(1);
+                            break;
+                        case 1:
+                            possibleMovesTemp[0].Add((sbyte)(1 * playerCorrection));
+                            possibleMovesTemp[1].Add(-1);
+                            break;
+                    }
+                }
+            }
+
+            // Add all possible moves
+            if ((piece.Type == FigureType.Bishop) || (piece.Type == FigureType.Rook) || (piece.Type == FigureType.Queen))
+            {
+                for(int i = 0; i < possibleMovesTemp[0].Count; i++)
+                {
+                    sbyte x = piece.Cell.X, y = piece.Cell.Y;
+                    y += possibleMovesTemp[0][i];
+                    x += possibleMovesTemp[1][i];
+                    while ((x >= boardMinBoundary) && (x <= boardMaxBoundary) && (y >= boardMinBoundary) && (y <= boardMaxBoundary))
+                    {
+                        Pos posToCheck = new Pos(y, x);
+                        if (piecesPos[piece.Owner].Contains(piece.Cell))
+                        {
+                            break;
+                        }
+                        else if (piecesPos[(piece.Owner == 0) ? 0 : 1].Contains(piece.Cell))
+                        {
+                            possibleMoves.Add(posToCheck);
+                            break;
+                        }
+                        else
+                            possibleMoves.Add(posToCheck);
+                        y += possibleMovesTemp[0][i];
+                        x += possibleMovesTemp[1][i];
+                    }
+                }
+            }
+            else
+            {
                 sbyte x = piece.Cell.X, y = piece.Cell.Y;
-                x += xAdd;
-                y += yAdd;
-                if ((x >= boardMinBoundary) && (x <= boardMaxBoundary) && (y >= boardMinBoundary) && (y <= boardMaxBoundary))
+                for (int i = 0; i < possibleMovesTemp[0].Count; i++)
                 {
-                    Pos posToCheck = new Pos(y, x);
-                    if (posToCheck.Equals(kingPos))
-                        checkPieces.Add(piece);
-                    attackPosPiece.Add(posToCheck);
+                    y += possibleMovesTemp[0][i];
+                    x += possibleMovesTemp[1][i];
+                    if ((x >= boardMinBoundary) && (x <= boardMaxBoundary) && (y >= boardMinBoundary) && (y <= boardMaxBoundary))
+                    {
+                        Pos posToCheck = new Pos(y, x);
+                        if (piecesPos[piece.Owner].Contains(piece.Cell))
+                        {
+                            break;
+                        }
+                        else if (piecesPos[(piece.Owner == 0) ? 0 : 1].Contains(piece.Cell))
+                        {
+                            possibleMoves.Add(posToCheck);
+                            break;
+                        }
+                        else
+                            possibleMoves.Add(posToCheck);
+                    }
                 }
             }
-            return attackPosPiece;
-        }
-
-        public static List<Pos> KingAttackPos(Figure piece, ref List<Figure> checkPieces, Pos kingPos)
-        {
-            sbyte xAdd = 0;
-            sbyte yAdd = 0;
-            List<Pos> attackPosPiece = new List<Pos>();
-            for (int direction = 0; direction < 8; direction++)
-            {
-                switch (direction)
-                {
-                    case 0:
-                        xAdd = 1;
-                        yAdd = 1;
-                        break;
-                    case 1:
-                        xAdd = 1;
-                        yAdd = 0;
-                        break;
-                    case 2:
-                        xAdd = 0;
-                        yAdd = 1;
-                        break;
-                    case 3:
-                        xAdd = -1;
-                        yAdd = -1;
-                        break;
-                    case 4:
-                        xAdd = 1;
-                        yAdd = -1;
-                        break;
-                    case 5:
-                        xAdd = -1;
-                        yAdd = 1;
-                        break;
-                    case 6:
-                        xAdd = 0;
-                        yAdd = -1;
-                        break;
-                    case 7:
-                        xAdd = -1;
-                        yAdd = 0;
-                        break;
-                }
-                sbyte x = piece.Cell.X, y = piece.Cell.Y;
-                x += xAdd;
-                y += yAdd;
-                if ((x >= boardMinBoundary) && (x <= boardMaxBoundary) && (y >= boardMinBoundary) && (y <= boardMaxBoundary))
-                {
-                    Pos posToCheck = new Pos(y, x);
-                    if (posToCheck.Equals(kingPos))
-                        checkPieces.Add(piece);
-                    attackPosPiece.Add(posToCheck);
-                }
-            }
-            return attackPosPiece;
-        }
-
-        public static List<Pos> QueenAttackPos(Figure piece, ref List<Figure> checkPieces, Pos kingPos)
-        {
-            List<Pos> attackPosPiece = new List<Pos>();
-            attackPosPiece.AddRange(BishopAttackPos(piece, ref checkPieces, kingPos));
-            attackPosPiece.AddRange(RookAttackPos(piece, ref checkPieces, kingPos));
-            return attackPosPiece;
-        }
-
-        public static List<Pos> BishopAttackPos(Figure piece, ref List<Figure> checkPieces, Pos kingPos)
-        {
-            sbyte xAdd = 0;
-            sbyte yAdd = 0;
-            List<Pos> attackPosPiece = new List<Pos>();
-            for (int direction = 0; direction < 4; direction++)
-            {
-                switch (direction)
-                {
-                    case 0:
-                        xAdd = -1;
-                        yAdd = -1;
-                        break;
-                    case 1:
-                        xAdd = 1;
-                        yAdd = -1;
-                        break;
-                    case 2:
-                        xAdd = -1;
-                        yAdd = 1;
-                        break;
-                    case 3:
-                        xAdd = 1;
-                        yAdd = 1;
-                        break;
-                }
-                RookBishopAttackPos(piece, ref checkPieces, kingPos, ref attackPosPiece, xAdd, yAdd);
-            }
-            return attackPosPiece;
-        }
-
-        public static List<Pos> RookAttackPos(Figure piece, ref List<Figure> checkPieces, Pos kingPos)
-        {
-            sbyte xAdd = 0;
-            sbyte yAdd = 0;
-            List<Pos> attackPosPiece = new List<Pos>();
-            for (int direction = 0; direction < 4; direction++)
-            {
-                switch (direction)
-                {
-                    case 0:
-                        xAdd = -1;
-                        yAdd = 0;
-                        break;
-                    case 1:
-                        xAdd = 0;
-                        yAdd = -1;
-                        break;
-                    case 2:
-                        xAdd = 1;
-                        yAdd = 0;
-                        break;
-                    case 3:
-                        xAdd = 0;
-                        yAdd = 1;
-                        break;
-                }
-                RookBishopAttackPos(piece,ref checkPieces, kingPos,ref attackPosPiece, xAdd, yAdd);
-            }
-            return attackPosPiece;
-        }
-
-        public static void RookBishopAttackPos(Figure piece, ref List<Figure> checkPieces, Pos kingPos, 
-            ref List<Pos> attackPosPiece, sbyte xAdd, sbyte yAdd)
-        {
-            sbyte x = piece.Cell.X, y = piece.Cell.Y;
-            x += xAdd;
-            y += yAdd;
-            while ((x >= boardMinBoundary) && (x <= boardMaxBoundary) && (y >= boardMinBoundary) && (y <= boardMaxBoundary))
-            {
-                Pos posToCheck = new Pos(y, x);
-                if (posToCheck.Equals(kingPos))
-                {
-                    attackPosPiece.Add(posToCheck);
-                    checkPieces.Add(piece);
-                    break;
-                }
-                else if (piecesPos.Contains(posToCheck))
-                {
-                    attackPosPiece.Add(posToCheck);
-                    break;
-                }
-                else
-                    attackPosPiece.Add(posToCheck);
-                x += xAdd;
-                y += yAdd;
-            }
+            return possibleMoves;
         }
     }
 }
