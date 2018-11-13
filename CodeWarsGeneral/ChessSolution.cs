@@ -58,181 +58,96 @@ namespace CodeWarsGeneral
 
     public class Solution
     {
-
         public const sbyte boardMaxBoundary = 7;
         public const sbyte boardMinBoundary = 0;
 
-        public static List<Pos> attackPos;
         public static List<Pos>[] piecesPos;
+        public static Pos kingPos, oppositeKingPos;
 
         // Returns an array of threats if the arrangement of 
         // the pieces is a check, otherwise null
         // Checks check for King of color which is defined by player argument
         public static List<Figure> isCheck(IList<Figure> pieces, int player)
         {
-            List<Figure> checkingPieces = AttackPos(pieces, player);
-            return checkingPieces;
+            oppositeKingPos = new Pos(-1, -1);
+            kingPos = new Pos(-1, -1);
+            foreach (Figure piece in pieces)
+            {
+                if ((piece.Type == FigureType.King) && (piece.Owner == player))
+                    kingPos = piece.Cell;
+                if ((piece.Type == FigureType.King) && (piece.Owner != player))
+                    oppositeKingPos = piece.Cell;
+            }
+            if (kingPos.X == (-1))
+                return null;
+
+            piecesPos = new List<Pos>[2];
+            piecesPos[0] = new List<Pos>();
+            piecesPos[1] = new List<Pos>();
+            foreach (Figure piece in pieces)
+            {
+                piecesPos[piece.Owner].Add(piece.Cell);
+            }
+            return isCheckWithout(pieces, player);
+        }
+
+        public static List<Figure> isCheckWithout(IList<Figure> pieces, int player)
+        {
+            List<Figure> checkPieces = new List<Figure>();
+            List<Pos> attackPosTemp = new List<Pos>();
+            foreach (Figure piece in pieces)
+            {
+                if (piece.Owner == (byte)player)
+                    continue;
+                attackPosTemp = PossibleMoves(piece, player);
+                if (attackPosTemp.Contains(kingPos))
+                    checkPieces.Add(piece);
+            }
+            return checkPieces;
         }
 
         // Returns true if the arrangement of the
         // pieces is a check mate, otherwise false
         public static bool isMate(IList<Figure> pieces, int player)
         {
-            List<Figure> checkingPieces = AttackPos(pieces, player);
+            List<Figure> checkingPieces = isCheck(pieces, player);
             if (checkingPieces.Count < 1)
                 return false;
-            Figure myKing = new Figure(FigureType.King, 0, new Pos(-1, -1));
-            foreach (Figure piece in pieces)
-            {
-                if ((piece.Type == FigureType.King) && (piece.Owner != player))
-                    myKing = piece;
-            }
-            if (myKing.Cell.X == (-1))
-                return false;
 
-            sbyte xAdd = 0;
-            sbyte yAdd = 0;
-            for (int direction = 0; direction < 8; direction++)
-            {
-                switch (direction)
-                {
-                    case 0:
-                        xAdd = 1;
-                        yAdd = 1;
-                        break;
-                    case 1:
-                        xAdd = 1;
-                        yAdd = 0;
-                        break;
-                    case 2:
-                        xAdd = 0;
-                        yAdd = 1;
-                        break;
-                    case 3:
-                        xAdd = -1;
-                        yAdd = -1;
-                        break;
-                    case 4:
-                        xAdd = 1;
-                        yAdd = -1;
-                        break;
-                    case 5:
-                        xAdd = -1;
-                        yAdd = 1;
-                        break;
-                    case 6:
-                        xAdd = 0;
-                        yAdd = -1;
-                        break;
-                    case 7:
-                        xAdd = -1;
-                        yAdd = 0;
-                        break;
-                }
-                sbyte x = myKing.Cell.X, y = myKing.Cell.Y;
-                x += xAdd;
-                y += yAdd;
-                if ((x >= boardMinBoundary) && (x <= boardMaxBoundary) && (y >= boardMinBoundary) && (y <= boardMaxBoundary))
-                {
-                    Pos posToCheck = new Pos(y, x);
-                    if ((!attackPos.Contains(posToCheck)) && (!(piecesPos.Contains(posToCheck))))
-                        return false;
+            List<Figure> piecesTemp = new List<Figure>();
+            piecesTemp.AddRange(pieces);
 
+            for(int i = 0; i < piecesTemp.Count; i++)
+            {
+                if(piecesTemp[i].Owner == player)
+                {
+                    foreach(Pos p in PossibleMoves(piecesTemp[i], player))
+                    {
+                        Figure moveToCheck = new Figure(piecesTemp[i].Type, piecesTemp[i].Owner, p, piecesTemp[i].Cell);
+                        Figure tempCapturePiece = piecesTemp[i];
+                        Figure tempMovedPiece = piecesTemp[i];
+                        int j;
+                        for (j = 0; j < piecesTemp.Count; j++)
+                        {
+                            if (piecesTemp[j].Cell.Equals(moveToCheck) && (!piecesTemp[j].Cell.Equals(oppositeKingPos)))
+                            {
+                                tempCapturePiece = piecesTemp[j];
+                                piecesTemp.Remove(piecesTemp[j]);
+                                break;
+                            }   
+                        }
+                        piecesTemp.Remove(tempMovedPiece);
+                        piecesTemp.Insert(i, moveToCheck);
+                        if (isCheckWithout(piecesTemp, player).Count < 1)
+                            return false;
+                        piecesTemp.Remove(moveToCheck);
+                        piecesTemp.Insert(i, tempMovedPiece);
+                        if (tempCapturePiece != tempMovedPiece)
+                            piecesTemp.Insert(j, tempCapturePiece);
+                    }
                 }
             }
             return true;
-        }
-
-        public static List<Figure> AttackPos(IList<Figure> pieces, int player)
-        {
-            attackPos = new List<Pos>();
-            List<Figure> checkPieces = new List<Figure>();
-            List<Pos> attackPosTemp = new List<Pos>();
-
-            Pos kingPos = new Pos(-1, -1);
-            foreach (Figure piece in pieces)
-            {
-                if ((piece.Type == FigureType.King) && (piece.Owner == player))
-                    kingPos = piece.Cell;
-            }
-            if (kingPos.X == (-1))
-                return null;
-
-            piecesPos = { new List<Pos>(), new List<Pos>()};
-            foreach (Figure piece in pieces)
-            {
-                piecesPos[piece.Owner].Add(piece.Cell);
-            }
-
-            foreach(Figure piece in pieces)
-            {
-                if (piece.Owner == (byte)player)
-                    continue;
-                if (piece.Type == FigureType.Pawn)
-                {
-                    attackPosTemp = PawnAttackPos(piece, player, ref checkPieces, kingPos);
-                } else if (piece.Type == FigureType.Knight)
-                {
-                    attackPosTemp = KnightAttackPos(piece, ref checkPieces, kingPos);
-                }
-                else if (piece.Type == FigureType.King)
-                {
-                    attackPosTemp = KingAttackPos(piece, ref checkPieces, kingPos);
-                }
-                else if (piece.Type == FigureType.Bishop)
-                {
-                    attackPosTemp = BishopAttackPos(piece, ref checkPieces, kingPos);
-                }
-                else if (piece.Type == FigureType.Queen)
-                {
-                    attackPosTemp = QueenAttackPos(piece, ref checkPieces, kingPos);
-                }
-                else if (piece.Type == FigureType.Rook)
-                {
-                    attackPosTemp = RookAttackPos(piece, ref checkPieces, kingPos);
-                }
-                foreach (Pos p in attackPosTemp)
-                {
-                    if (!attackPos.Contains(p))
-                        attackPos.Add(p);
-                }
-            }
-            return checkPieces;
-        }
-
-        public static List<Pos> PawnAttackPos(Figure piece,int player, ref List<Figure> checkPieces, Pos kingPos)
-        {
-            sbyte playerCorrection;
-            playerCorrection = ((player == 0) ? (sbyte)1 : (sbyte)-1);
-            sbyte xAdd = 0;
-            sbyte yAdd = 0;
-            List<Pos> attackPosPiece = new List<Pos>();
-            for (int direction = 0; direction < 2; direction++)
-            {
-                switch (direction)
-                {
-                    case 0:
-                        xAdd = 1;
-                        yAdd = 1;
-                        break;
-                    case 1:
-                        xAdd = -1;
-                        yAdd = 1;
-                        break;
-                }
-                yAdd *= playerCorrection;
-                sbyte x = piece.Cell.X, y = piece.Cell.Y;
-                x += xAdd;
-                y += yAdd;
-                if ((x >= boardMinBoundary) && (x <= boardMaxBoundary) && (y >= boardMinBoundary) && (y <= boardMaxBoundary))
-                {
-                    Pos posToCheck = new Pos(y, x);
-                    if (posToCheck.Equals(kingPos))
-                        checkPieces.Add(piece);
-                    attackPosPiece.Add(posToCheck);
-                }
-            }
-            return attackPosPiece;
         }
 
         public static List<Pos> PossibleMoves(Figure piece, int player)
@@ -401,11 +316,11 @@ namespace CodeWarsGeneral
                     while ((x >= boardMinBoundary) && (x <= boardMaxBoundary) && (y >= boardMinBoundary) && (y <= boardMaxBoundary))
                     {
                         Pos posToCheck = new Pos(y, x);
-                        if (piecesPos[piece.Owner].Contains(piece.Cell))
+                        if (piecesPos[piece.Owner].Contains(posToCheck))
                         {
                             break;
                         }
-                        else if (piecesPos[(piece.Owner == 0) ? 0 : 1].Contains(piece.Cell))
+                        else if (piecesPos[(piece.Owner == 0) ? 0 : 1].Contains(posToCheck))
                         {
                             possibleMoves.Add(posToCheck);
                             break;
@@ -419,19 +334,19 @@ namespace CodeWarsGeneral
             }
             else
             {
-                sbyte x = piece.Cell.X, y = piece.Cell.Y;
                 for (int i = 0; i < possibleMovesTemp[0].Count; i++)
                 {
+                    sbyte x = piece.Cell.X, y = piece.Cell.Y;
                     y += possibleMovesTemp[0][i];
                     x += possibleMovesTemp[1][i];
                     if ((x >= boardMinBoundary) && (x <= boardMaxBoundary) && (y >= boardMinBoundary) && (y <= boardMaxBoundary))
                     {
                         Pos posToCheck = new Pos(y, x);
-                        if (piecesPos[piece.Owner].Contains(piece.Cell))
+                        if (piecesPos[piece.Owner].Contains(posToCheck))
                         {
                             break;
                         }
-                        else if (piecesPos[(piece.Owner == 0) ? 0 : 1].Contains(piece.Cell))
+                        else if (piecesPos[(piece.Owner == 0) ? 0 : 1].Contains(posToCheck))
                         {
                             possibleMoves.Add(posToCheck);
                             break;

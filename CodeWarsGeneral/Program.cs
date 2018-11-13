@@ -12,6 +12,7 @@ namespace CodeWarsGeneral
         {
             List<Figure> listFig;
             listFig = Solution.isCheck(pawnThreatensKing, 0);
+            Solution.isMate(pawnThreatensKing, 0);
 
             Console.ReadKey();
         }
