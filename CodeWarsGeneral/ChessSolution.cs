@@ -88,11 +88,7 @@ namespace CodeWarsGeneral
             {
                 piecesPos[piece.Owner].Add(piece.Cell);
             }
-            return isCheckWithout(pieces, player);
-        }
 
-        public static List<Figure> isCheckWithout(IList<Figure> pieces, int player)
-        {
             List<Figure> checkPieces = new List<Figure>();
             List<Pos> attackPosTemp = new List<Pos>();
             foreach (Figure piece in pieces)
@@ -138,7 +134,7 @@ namespace CodeWarsGeneral
                         }
                         piecesTemp.Remove(tempMovedPiece);
                         piecesTemp.Insert(i, moveToCheck);
-                        if (isCheckWithout(piecesTemp, player).Count < 1)
+                        if (isCheck(piecesTemp, player).Count < 1)
                             return false;
                         piecesTemp.Remove(moveToCheck);
                         piecesTemp.Insert(i, tempMovedPiece);
