@@ -95,7 +95,7 @@ namespace CodeWarsGeneral
             {
                 if (piece.Owner == (byte)player)
                     continue;
-                attackPosTemp = PossibleMoves(piece, player);
+                attackPosTemp = PossibleMoves(piece, player, pieces);
                 if (attackPosTemp.Contains(kingPos))
                     checkPieces.Add(piece);
             }
@@ -117,7 +117,7 @@ namespace CodeWarsGeneral
             {
                 if(piecesTemp[i].Owner == player)
                 {
-                    foreach(Pos p in PossibleMoves(piecesTemp[i], player))
+                    foreach(Pos p in PossibleMoves(piecesTemp[i], player, pieces))
                     {
                         Figure moveToCheck = new Figure(piecesTemp[i].Type, piecesTemp[i].Owner, p, piecesTemp[i].Cell);
                         Figure tempCapturePiece = piecesTemp[i];
@@ -125,7 +125,7 @@ namespace CodeWarsGeneral
                         int j;
                         for (j = 0; j < piecesTemp.Count; j++)
                         {
-                            if (piecesTemp[j].Cell.Equals(moveToCheck) && (!piecesTemp[j].Cell.Equals(oppositeKingPos)))
+                            if (piecesTemp[j].Cell.Equals(moveToCheck.Cell) && (!piecesTemp[j].Cell.Equals(oppositeKingPos)))
                             {
                                 tempCapturePiece = piecesTemp[j];
                                 piecesTemp.Remove(piecesTemp[j]);
@@ -146,11 +146,11 @@ namespace CodeWarsGeneral
             return true;
         }
 
-        public static List<Pos> PossibleMoves(Figure piece, int player)
+        public static List<Pos> PossibleMoves(Figure piece, int player, IList<Figure> pieces)
         {
             List<Pos> possibleMoves = new List<Pos>();
             List<sbyte>[] possibleMovesTemp = { new List<sbyte>(), new List<sbyte>() };
-            if ((piece.Type == FigureType.Bishop) || (piece.Type == FigureType.Queen))
+            if ((piece.Type == FigureType.Bishop))
             {
                 for (int direction = 0; direction < 4; direction++)
                 {
@@ -175,7 +175,7 @@ namespace CodeWarsGeneral
                     }
                 }
             }
-            if ((piece.Type == FigureType.Rook) || (piece.Type == FigureType.Queen))
+            if ((piece.Type == FigureType.Rook))
             {
                 for (int direction = 0; direction < 4; direction++)
                 {
@@ -200,7 +200,7 @@ namespace CodeWarsGeneral
                     }
                 }
             }
-            if (piece.Type == FigureType.King)
+            if (piece.Type == FigureType.King || (piece.Type == FigureType.Queen))
             {
                 for (int direction = 0; direction < 8; direction++)
                 {
@@ -284,8 +284,8 @@ namespace CodeWarsGeneral
             }
             if ((piece.Type == FigureType.Pawn))
             {
-                sbyte playerCorrection = ((player == 0) ? (sbyte)1 : (sbyte)-1);
-                for (int direction = 0; direction < 2; direction++)
+                sbyte playerCorrection = ((piece.Owner == 0) ? (sbyte)-1 : (sbyte)1);
+                for (int direction = 0; direction < 3; direction++)
                 {
                     switch (direction)
                     {
@@ -296,6 +296,10 @@ namespace CodeWarsGeneral
                         case 1:
                             possibleMovesTemp[0].Add((sbyte)(1 * playerCorrection));
                             possibleMovesTemp[1].Add(-1);
+                            break;
+                        case 2:
+                            possibleMovesTemp[0].Add((sbyte)(1 * playerCorrection));
+                            possibleMovesTemp[1].Add(0);
                             break;
                     }
                 }
@@ -316,7 +320,7 @@ namespace CodeWarsGeneral
                         {
                             break;
                         }
-                        else if (piecesPos[(piece.Owner == 0) ? 0 : 1].Contains(posToCheck))
+                        else if (piecesPos[(piece.Owner == 0) ? 1 : 0].Contains(posToCheck))
                         {
                             possibleMoves.Add(posToCheck);
                             break;
@@ -338,17 +342,48 @@ namespace CodeWarsGeneral
                     if ((x >= boardMinBoundary) && (x <= boardMaxBoundary) && (y >= boardMinBoundary) && (y <= boardMaxBoundary))
                     {
                         Pos posToCheck = new Pos(y, x);
-                        if (piecesPos[piece.Owner].Contains(posToCheck))
+                        if(piece.Type != FigureType.Pawn)
                         {
-                            break;
-                        }
-                        else if (piecesPos[(piece.Owner == 0) ? 0 : 1].Contains(posToCheck))
-                        {
-                            possibleMoves.Add(posToCheck);
-                            break;
+                            if (piecesPos[(piece.Owner == 0) ? 1 : 0].Contains(posToCheck))
+                                possibleMoves.Add(posToCheck);
+                            else if (!piecesPos[piece.Owner].Contains(posToCheck))
+                                possibleMoves.Add(posToCheck);
                         }
                         else
-                            possibleMoves.Add(posToCheck);
+                        {
+                            if(x == piece.Cell.X)
+                            {
+                                if((!piecesPos[0].Contains(posToCheck)) && (!piecesPos[1].Contains(posToCheck)))
+                                    possibleMoves.Add(posToCheck);
+                            }
+                            else
+                            {
+                                if(piecesPos[(piece.Owner == 0) ? 1 : 0].Contains(posToCheck))
+                                    possibleMoves.Add(posToCheck);
+                                //en passant
+                                if ((!piecesPos[0].Contains(posToCheck)) && (!piecesPos[1].Contains(posToCheck)))
+                                {
+                                    Pos enPassantToCheck = new Pos(piece.Cell.Y, x);
+                                    if(piecesPos[(piece.Owner == 0) ? 1 : 0].Contains(enPassantToCheck))
+                                    {
+                                        foreach (Figure figure in pieces)
+                                        {
+                                            if(figure.Cell.Equals(enPassantToCheck) && (figure.Type == FigureType.Pawn))
+                                            {
+                                                if(figure.PrevCell != null)
+                                                {
+                                                    if((Math.Abs(figure.Cell.X - figure.PrevCell.Value.X)) == 2)
+                                                    {
+                                                        possibleMoves.Add(posToCheck);
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
