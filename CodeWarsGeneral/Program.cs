@@ -11,8 +11,8 @@ namespace CodeWarsGeneral
         static void Main(string[] args)
         {
             List<Figure> listFig;
-            // listFig = Solution.isCheck(pawnThreatensKing, 0);
-            bool test = Solution.isMate(ChessTest2, 0);
+            listFig = Solution.isCheck(ChessTest2, 1);
+            bool test = Solution.isMate(ChessTest3, 0);
 
             Console.ReadKey();
         }
@@ -79,7 +79,7 @@ namespace CodeWarsGeneral
             new Figure(FigureType.Queen, 0, new Pos(7, 3)),
         };
         public static readonly Figure[] ChessTest2 = new[]
-{
+        {
             new Figure(FigureType.King, 1, new Pos(0, 4)),
             new Figure(FigureType.Queen, 1, new Pos(7, 3), new Pos(6,2)),
             new Figure(FigureType.Rook, 1, new Pos(6, 3)),
@@ -87,6 +87,14 @@ namespace CodeWarsGeneral
             new Figure(FigureType.Pawn, 0, new Pos(6, 5)),
             new Figure(FigureType.King, 0, new Pos(7, 4)),
             new Figure(FigureType.Rook, 0, new Pos(7, 5)),
+        };
+        public static readonly Figure[] ChessTest3 = new[]
+        {
+            new Figure(FigureType.King, 1, new Pos(0, 4)),
+            new Figure(FigureType.Pawn, 1, new Pos(4, 4)),
+            new Figure(FigureType.Pawn, 0, new Pos(4, 5), new Pos(6, 5)),
+            new Figure(FigureType.King, 0, new Pos(7, 4)),
+
         };
     }
 }
