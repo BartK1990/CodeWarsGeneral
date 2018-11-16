@@ -123,21 +123,23 @@ namespace CodeWarsGeneral
                         Figure tempCapturePiece = piecesTemp[i];
                         Figure tempMovedPiece = piecesTemp[i];
                         int j;
+                        int listIndexCorrection = 0;
                         for (j = 0; j < piecesTemp.Count; j++)
                         {
                             if (piecesTemp[j].Cell.Equals(moveToCheck.Cell) && (!piecesTemp[j].Cell.Equals(oppositeKingPos)))
                             {
                                 tempCapturePiece = piecesTemp[j];
                                 piecesTemp.Remove(piecesTemp[j]);
+                                listIndexCorrection = 1;
                                 break;
                             }   
                         }
                         piecesTemp.Remove(tempMovedPiece);
-                        piecesTemp.Insert(i, moveToCheck);
+                        piecesTemp.Insert(i - listIndexCorrection, moveToCheck);
                         if (isCheck(piecesTemp, player).Count < 1)
                             return false;
                         piecesTemp.Remove(moveToCheck);
-                        piecesTemp.Insert(i, tempMovedPiece);
+                        piecesTemp.Insert(i - listIndexCorrection, tempMovedPiece);
                         if (tempCapturePiece != tempMovedPiece)
                             piecesTemp.Insert(j, tempCapturePiece);
                     }
