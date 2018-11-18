@@ -11,7 +11,7 @@ namespace CodeWarsGeneral
         static void Main(string[] args)
         {
             double result;
-            result = Kata.calculate("(5-(((2+2*2)*2)+2))*6");
+            result = Kata.calculate("(5-(((2+2*2/2*2/2)*2)+2))*6");
 
 
             Console.ReadKey();

@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace CodeWarsGeneral
@@ -52,9 +52,9 @@ namespace CodeWarsGeneral
             string beforePreviousSpecialIndex="", afterNextSpecialIndex="";
             double decimalToCalculate1, decimalToCalculate2;
 
-            for (int i = 0; i<specialChars.Length; i++)
+            for (int i = 0; i<mathOperOrder.Length; i++)
             {
-                while ((specialIndex = s.IndexOf(specialChars[i])) >= 0)
+                while ((specialIndex = s.IndexOfAny(mathOperOrder[i])) >= 0)
                 {
                     if (specialIndex == 0)
                     {
@@ -98,7 +98,7 @@ namespace CodeWarsGeneral
                     decimalToCalculate1 = double.Parse(s.Substring(previousSpecialIndex + 1, specialIndex - previousSpecialIndex - 1));
                     decimalToCalculate2 = double.Parse(s.Substring(specialIndex + 1, nextSpecialIndex - specialIndex - 1));
 
-                    switch (i)
+                    switch (mathOperDict[s[specialIndex]])
                     {
                         case 0:
                             result = Math.Pow(decimalToCalculate1, decimalToCalculate2);
