@@ -43,9 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Calculator.cs" />
     <Compile Include="ChessSolution.cs" />
     <Compile Include="Dioph.cs" />
     <Compile Include="Fibonacci.cs" />
+    <Compile Include="LcsClass.cs" />
     <Compile Include="PokerHand.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
