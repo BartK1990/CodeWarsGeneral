@@ -9,8 +9,20 @@ namespace CodeWarsGeneral
 {
     public class Kata
     {
-        public static char[] specialChars = {'^', '/', '*', '+', '-'};
-
+        public static char[] specialChars = { '^', '/', '*', '+', '-' };
+        public static char[][] mathOperOrder =  {
+                                                    new char[]{'^'},
+                                                    new char[]{ '/', '*' },
+                                                    new char[]{ '+', '-' }
+                                                };
+        public static Dictionary<char, int> mathOperDict = new Dictionary<char, int>()  {
+                                                                                            {'^', 0},
+                                                                                            {'/', 1},
+                                                                                            {'*', 2},
+                                                                                            {'+', 3},
+                                                                                            {'-', 4}
+                                                                                        };
+        
         public static double calculate(string s)
         {
             int leftBracketIndex, rightBracketIndex;
@@ -81,9 +93,11 @@ namespace CodeWarsGeneral
                                 nextSpecialIndex = s.Length;
                         }
                     }
+
                     afterNextSpecialIndex = s.Substring(nextSpecialIndex);
                     decimalToCalculate1 = double.Parse(s.Substring(previousSpecialIndex + 1, specialIndex - previousSpecialIndex - 1));
                     decimalToCalculate2 = double.Parse(s.Substring(specialIndex + 1, nextSpecialIndex - specialIndex - 1));
+
                     switch (i)
                     {
                         case 0:

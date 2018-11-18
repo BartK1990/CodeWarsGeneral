@@ -41,7 +41,7 @@ namespace CodeWarsGeneral.Tests
         [Test]
         public void Test5()
         {
-            Assert.AreEqual(true, close(Kata.calculate("(5-(((2+2*2)*2)+2)))*6"), -42));
+            Assert.AreEqual(true, close(Kata.calculate("(5-(((2+2*2)*2)+2))*6"), -54));
         }
 
 
