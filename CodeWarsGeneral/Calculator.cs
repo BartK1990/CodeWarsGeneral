@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace CodeWarsGeneral
 {
-    public class Kata
+    public class Evaluator
     {
         public static char[] specialChars = { '^', '/', '*', '+', '-' };
         public static char[][] mathOperOrder =  {
@@ -23,7 +23,7 @@ namespace CodeWarsGeneral
                                                                                             {'-', 4}
                                                                                         };
         
-        public static double calculate(string s)
+        public static double Evaluate(string s)
         {
             int leftBracketIndex, rightBracketIndex;
             string beforeLeftBracket, insideBrackets, afterRightBracket;
@@ -47,7 +47,8 @@ namespace CodeWarsGeneral
         
         public static string calculateNoBrackets(string s)
         {
-            double result=0;
+            double result;
+            double.TryParse(s, out result);
             int specialIndex, previousSpecialIndex, nextSpecialIndex;
             string beforePreviousSpecialIndex="", afterNextSpecialIndex="";
             double decimalToCalculate1, decimalToCalculate2;
@@ -58,13 +59,25 @@ namespace CodeWarsGeneral
                 {
                     if (specialIndex == 0)
                     {
-                        specialIndex = s.IndexOf(specialChars[i], 1);
-                        if(specialIndex == -1) // for negative
+                        specialIndex = s.IndexOfAny(mathOperOrder[i], 2);
+                        if (specialIndex == -1) // for negative
                         {
-                            result = double.Parse(s);
+                            result = double.Parse(Regex.Replace(s, @"--+", ""));
                             break;
                         }
                     }
+                    // prevent doubled subtractions
+                    string afterSpecialIndex = s.Substring(specialIndex + 1);
+                    if (afterSpecialIndex.Length >= 2)
+                    {
+                        while (afterSpecialIndex.Substring(0, 2) == "--")
+                        {
+                            afterSpecialIndex = afterSpecialIndex.Substring(2);
+                            if (afterSpecialIndex.Length < 2)
+                                break;
+                        }    
+                    }
+                    s = s.Substring(0, specialIndex) + s[specialIndex] + afterSpecialIndex;
                     if ((previousSpecialIndex = s.LastIndexOfAny(specialChars, specialIndex - 1)) == -1)
                         beforePreviousSpecialIndex = "";
                     else // Check negative values
