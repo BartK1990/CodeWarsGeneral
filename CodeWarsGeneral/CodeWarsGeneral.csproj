@@ -46,6 +46,7 @@
     <Compile Include="Calculator.cs" />
     <Compile Include="ChessSolution.cs" />
     <Compile Include="Dioph.cs" />
+    <Compile Include="EventsAndDelegates.cs" />
     <Compile Include="Fibonacci.cs" />
     <Compile Include="LcsClass.cs" />
     <Compile Include="PokerHand.cs" />
