@@ -59,6 +59,7 @@ namespace PokerHandsSortable
         public string Cards { get; private set; }
         public int Strength { get; private set; }
         public List<Card> CardsList { get; set; }
+        public List<Card> CardsListSortedByStrength { get; set; }
 
         private Dictionary<char, int> values = new Dictionary<char, int>()
         {
@@ -79,9 +80,11 @@ namespace PokerHandsSortable
 
         public PokerHand(string cards)
         {
-            this.Cards = cards;
-            this.CardsList = ReadHand(this);
-            Strength = HandStrength(this.CardsList);
+            Cards = cards;
+            CardsList = ReadHand(this);
+            Strength = HandStrength(CardsList);
+            var cardsSortedByStrength = CardsList.OrderByDescending(n => CardsList.Count(x => x.Value == n.Value)).ThenByDescending(n => n.Value);
+            CardsListSortedByStrength = cardsSortedByStrength.ToList();
         }
         public List<Card> ReadHand(PokerHand hand)
         {
@@ -172,15 +175,11 @@ namespace PokerHandsSortable
             if (this.Strength < hand.Strength)
                 return 1;
 
-            var FHSortedByStrength = this.CardsList.OrderByDescending(n => this.CardsList.Count(x => x.Value == n.Value)).ThenByDescending(n => n.Value);
-            List<Card> FHSortedByStrengthList = FHSortedByStrength.ToList();
-            var SHSortedByStrength = hand.CardsList.OrderByDescending(n => hand.CardsList.Count(x => x.Value == n.Value)).ThenByDescending(n => n.Value);
-            List<Card> SHSortedByStrengthList = SHSortedByStrength.ToList();
-            for (int i = 0; i < FHSortedByStrengthList.Count; i++)
+            for (int i = 0; i < this.CardsListSortedByStrength.Count; i++)
             {
-                if (FHSortedByStrengthList[i].Value > SHSortedByStrengthList[i].Value)
+                if (this.CardsListSortedByStrength[i].Value > hand.CardsListSortedByStrength[i].Value)
                     return -1;
-                if (FHSortedByStrengthList[i].Value < SHSortedByStrengthList[i].Value)
+                if (this.CardsListSortedByStrength[i].Value < hand.CardsListSortedByStrength[i].Value)
                     return 1;
             }
             return 0;
