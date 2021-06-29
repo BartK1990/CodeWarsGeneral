@@ -43,16 +43,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="7x7Skyscrapers.cs" />
+    <Compile Include="AlphabeticAnagrams.cs" />
     <Compile Include="Calculator.cs" />
-    <Compile Include="ChessSolution.cs" />
-    <Compile Include="Dioph.cs" />
-    <Compile Include="EventsAndDelegates.cs" />
-    <Compile Include="Fibonacci.cs" />
-    <Compile Include="LcsClass.cs" />
-    <Compile Include="PokerHand.cs" />
+    <Compile Include="DecodeTheMorseCode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sudoku.cs" />
+    <Compile Include="SortablePokerHands.cs" />
+    <Compile Include="TheMillionthFibonacciKata.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
